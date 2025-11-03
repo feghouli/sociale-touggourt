@@ -7,7 +7,38 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+
+@media (max-width: 600px) {
+  .container {
+    padding: 25px 20px 15px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+
+  .page-header .header-logo {
+    width: 120px;
+  }
+
+  .gradient-title {
+    font-size: 20px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+  }
+
+  input, select, button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  body {
+    padding: 10px;
+  }
+}
+
+
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Cairo', sans-serif;
@@ -296,4 +327,5 @@ async function submitForm() {
 </script>
 </body>
 </html>
+
 
