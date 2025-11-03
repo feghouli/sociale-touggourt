@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التحقق من تسجيل الرحلات 2025 - الخدمات الاجتماعية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background: linear-gradient(135deg, #ffe5e5, #ffcccc, #ffb3b3, #ff9999);
+      background-attachment: fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      animation: bgMove 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgMove {
+      from { background-position: 0% 50%; }
+      to { background-position: 100% 50%; }
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 5px;
+    }
+
+    .logo img {
+      width: 160px;
+      height: auto;
+      display: block;
+      margin: 0 auto 15px auto;
+      filter: contrast(1.05) brightness(1.1);
+      animation: pulseLogo 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .header-text {
+      font-size: 17px;
+      font-weight: 600;
+      color: #000;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #ef4444;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 10px 0;
+      border-bottom: 2px solid #ff8a8a;
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+
+    input[type="text"] {
+      width: 90%;
+      padding: 12px;
+      margin-top: 15px;
+      border: 2px solid #fca5a5;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: 0.3s;
+      text-align: center;
+      font-family: "Cairo", sans-serif;
+    }
+
+    input[type="text"]:focus {
+      border-color: #ef4444;
+      box-shadow: 0 0 6px #f87171;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: "Cairo", sans-serif;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #dc2626;
+    }
+
+    .loader {
+      margin-top: 15px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ef4444;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: spin 1s linear infinite;
+      display: none;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="https://lh3.googleusercontent.com/d/1AOSzlvuRb-fAO0bqvo412HcHTfpRAX15" alt="شعار اللجنة">
+    </div>
+
+    <div class="header-text">
+      الجمهورية الجزائرية الديمقراطية الشعبية<br>
+      وزارة التربية الوطنية<br>
+      اللجنة الوطنية للخدمات الاجتماعية لعمال التربية<br>
+      اللجنة الولائية للخدمات الاجتماعية لعمال التربية لولاية توقرت
+    </div>
+
+    <h1>تحميل وصل تسجيل المتقاعدين في الرحلات</h1>
+
+    <input type="text" id="empId" placeholder="أدخل رقم التعريف الوظيفي">
+    <div class="loader" id="loader"></div>
+    <button onclick="checkRegistration()">تحميل وصل التسجيل</button>
+  </div>
+
+  <script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbwhPWD_i8QIIZeT2RGv642Htbx7HLi36-CjQX7uyfcr6AP68Y1fNbdiidww1nbZktC8jA/exec";
+
+  async function checkRegistration() {
+    const empId = document.getElementById("empId").value.trim();
+    const loader = document.getElementById("loader");
+
+    if (!empId) {
+      Swal.fire({
+        icon: "warning",
+        title: "يرجى إدخال رقم التعريف الوظيفي",
+        confirmButtonText: "حسنًا"
+      });
+      return;
+    }
+
+    loader.style.display = "block";
+
+    try {
+      const response = await fetch(`${scriptURL}?id=${empId}`);
+      const data = await response.json();
+      loader.style.display = "none";
+
+      if (!data.found) {
+        Swal.fire({
+          icon: "error",
+          title: "لم يتم العثور على تسجيل",
+          text: "الرقم الذي أدخلته غير موجود في تسجيلات الرحلات لسنة 2025."
+        });
+        return;
+      }
+
+      const d = data.data;
+      Swal.fire({
+        title: "✅ التسجيل موجود",
+        html: `
+          <div style="text-align:right;font-family:'Cairo',sans-serif;direction:rtl;">
+            <p><b>اللقب والإسم:</b> ${d.name}</p>
+            <p><b>رقم الحساب:</b> ${d.empId}</p>
+            <p><b>الصفة:</b> ${d.status}</p>
+            <p><b>الدائرة:</b> ${d.daira}</p>
+            <p><b>البلدية:</b> ${d.commune}</p>
+            <p><b>الرحلة:</b> ${d.trip}</p>
+            <p><b>رقم الهاتف:</b> ${d.phone}</p>
+            <p><b>تاريخ التسجيل:</b> ${d.date}</p>
+            <br>
+            <div style="text-align:center;">
+              <a href="${data.fileUrl}" target="_blank" style="
+                display:inline-block;
+                background:#ef4444;
+                color:white;
+                text-decoration:none;
+                padding:12px 26px;
+                border-radius:10px;
+                font-weight:700;
+                font-size:17px;
+                transition:0.3s;
+                font-family:'Cairo',sans-serif;
+              " onmouseover="this.style.background='#dc2626';"
+                onmouseout="this.style.background='#ef4444';">
+                📥 تحميل الوصل PDF
+              </a>
+            </div>
+          </div>
+        `,
+        showConfirmButton: false,
+        width: 520
+      });
+
+    } catch (err) {
+      loader.style.display = "none";
+      Swal.fire("خطأ", "فشل الاتصال بالخادم", "error");
+    }
+  }
+
+  // ✅ تعبئة الحقل والضغط التلقائي بعد تحميل الصفحة
+  window.onload = function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const empId = urlParams.get("empId");
+
+    if (empId) {
+      const empInput = document.getElementById("empId");
+      empInput.value = empId;
+
+      setTimeout(() => {
+        const btn = document.querySelector("button[onclick='checkRegistration()']");
+        if (btn) btn.click();
+      }, 500);
+    }
+  };
+  </script>
+
+</body>
+</html>
+
+

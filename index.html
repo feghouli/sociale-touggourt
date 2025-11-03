@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الصفحة الرئيسية - الخدمات الاجتماعية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #333;
+      background: linear-gradient(135deg, #e3f2fd 0%, #e0f7fa 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/symphony.png');
+      opacity: 0.1;
+      z-index: -1;
+    }
+
+    .welcome-bar {
+      background: #0d47a1;
+      color: #fff;
+      padding: 10px 0;
+      font-size: 16px;
+      font-weight: 600;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .welcome-text {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scrollText 15s linear infinite;
+    }
+
+    @keyframes scrollText {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+
+    header {
+      background-color: #1976d2;
+      color: white;
+      padding: 25px 10px;
+      border-bottom-left-radius: 25px;
+      border-bottom-right-radius: 25px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* 🔹 حاوية الشعار */
+.logo-container {
+  position: relative;
+  display: inline-block;
+  width: 160px;
+  height: 160px;
+  margin-bottom: 10px;
+}
+
+/* 🔸 صورة الشعار */
+.logo-container img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseLogo 2.5s ease-in-out infinite; /* 💓 نبض لطيف */
+}
+
+/* 🌀 الإطار الدائري المتحرك */
+.logo-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px dashed transparent;
+  background: linear-gradient(135deg, #1976d2, #26c6da);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  padding: 4px;
+  transform: translate(-50%, -50%);
+  animation: rotateRing 6s linear infinite; /* ⭕ دوران ناعم */
+}
+
+/* 🔄 حركة دوران الإطار */
+@keyframes rotateRing {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ❤️ حركة نبض الشعار */
+@keyframes pulseLogo {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.08); }
+}
+
+
+    header h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      padding: 40px 20px 60px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .service {
+      background-color: white;
+      border-radius: 20px;
+      padding: 25px 15px;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      opacity: 0;
+      transform: translateY(50px);
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .service:nth-child(1) { animation-delay: 0.3s; }
+    .service:nth-child(2) { animation-delay: 0.6s; }
+    .service:nth-child(3) { animation-delay: 0.9s; }
+    .service:nth-child(4) { animation-delay: 1.2s; }
+    .service:nth-child(5) { animation-delay: 1.5s; }
+    .service:nth-child(6) { animation-delay: 1.8s; }
+
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .service:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .service i {
+      font-size: 55px;
+      color: #1976d2;
+      margin-bottom: 15px;
+      transition: transform 0.4s ease;
+    }
+
+    .service:hover i {
+      transform: rotate(10deg) scale(1.1);
+    }
+
+    .service h3 {
+      margin: 10px 0 0;
+      font-size: 20px;
+      color: #0d47a1;
+      font-weight: 700;
+    }
+
+    footer {
+      background: #1976d2;
+      color: white;
+      padding: 15px;
+      border-top-left-radius: 25px;
+      border-top-right-radius: 25px;
+      font-size: 14px;
+    }
+
+    /* SweetAlert أيقونات */
+    .swal2-popup .icon-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .icon-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 110px;
+      height: 110px;
+    }
+
+    .icon-btn i { font-size: 38px; margin-bottom: 8px; }
+    .icon-btn span { font-size: 14px; font-weight: 600; }
+
+    .icon-btn.employee {
+      background: #e3f2fd;
+      border: 2px solid #1976d2;
+      color: #0d47a1;
+    }
+
+    .icon-btn.employee:hover {
+      background: #1976d2;
+      color: white;
+    }
+
+    .icon-btn.retired {
+      background: #fff3e0;
+      border: 2px solid #fb8c00;
+      color: #e65100;
+    }
+
+    .icon-btn.retired:hover {
+      background: #fb8c00;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="welcome-bar">
+    <div class="welcome-text"> الجمهورية الجزائرية الديمقراطية الشعبية - وزارة التربية الوطنية - اللجنة الوطنية للخدمات الإجتماعية لعمال التربية </div>
+  </div>
+
+  <header>
+    <div class="logo-container">
+      <div class="logo-ring"></div>
+      <img src="https://lh3.googleusercontent.com/d/1AOSzlvuRb-fAO0bqvo412HcHTfpRAX15" alt="شعار الخدمات الاجتماعية">
+    </div>
+    <h1>الخدمات الإجتماعية توقرت</h1>
+    <p>أهلاً وسهلاً بكم في البوابة الإلكترونية للجنة الولائية للخدمات الإجتماعية لعمال التربية لولاية توقرت</p>
+  </header>
+
+  <section class="services">
+    <div class="service" onclick="openOptions('العمرة')">
+      <i class="fa-solid fa-kaaba"></i>
+      <h3>العمرة</h3>
+    </div>
+
+    <div class="service" onclick="openOptions('الرحلات')">
+      <i class="fa-solid fa-bus"></i>
+      <h3>الرحلات</h3>
+    </div>
+
+    <div class="service" onclick="openOptions('المخيمات')">
+      <i class="fa-solid fa-house"></i>
+      <h3>المخيمات</h3>
+    </div>
+
+    <div class="service" onclick="openOptions('السلف الإجتماعية')">
+      <i class="fa-solid fa-sack-dollar"></i>
+      <h3>السلف الإجتماعية</h3>
+    </div>
+
+    <div class="service" onclick="openOptions('استمارات الخدمات')">
+      <i class="fa-solid fa-file-pen"></i>
+      <h3>استمارات الخدمات</h3>
+    </div>
+
+    <div class="service" onclick="openOptions('الضوابط العامة')">
+    <i class="fa-solid fa-scale-balanced"></i>
+      <h3>الضوابط العامة</h3>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 - اللجنة الولائية للخدمات الاجتماعية لعمال التربية لولاية توقرت - جميع الحقوق محفوظة
+  </footer>
+
+<script>
+  const registrationStatus = {
+    "العمرة": false,
+    "الرحلات": false,
+    "المخيمات": false,
+    "استمارات الخدمات": true,
+    "السلف الإجتماعية": false,
+    "الضوابط العامة": true
+  };
+
+  function openOptions(serviceType) {
+    if (!registrationStatus[serviceType]) {
+      Swal.fire({
+        icon: 'info',
+        title: '⛔ التسجيل مغلق حالياً',
+        html: `نأسف، التسجيل في 
+          <span style="color:red; font-weight:bold;">${serviceType}</span> 
+          غير متاح في الوقت الحالي.`,
+        confirmButtonText: 'حسناً',
+        confirmButtonColor: '#1976d2',
+        customClass: { confirmButton: 'cairo-btn' }
+      });
+      return;
+    }
+
+    if (serviceType === "استمارات الخدمات") {
+      window.open('https://drive.google.com/file/d/1kMa5_uUT0ZW-TnC6u6T2IBNSJhRcwlFw/view?usp=sharing', '_blank');
+    } 
+    else if (serviceType === "السلف الإجتماعية") {
+      window.open('صفحة_السلف.html', '_blank');
+    } 
+    else if (serviceType === "الضوابط العامة") {
+      window.open('https://drive.google.com/file/d/1GeIhUKVCZPHAOzb8jguj5OcDllh_bMbv/view?usp=sharing', '_blank');
+    } 
+    else {
+      Swal.fire({
+        title: `اختر الفئة المناسبة للتسجيل في ${serviceType}`,
+        html: `
+          <div class="icon-container">
+            <div class="icon-btn employee" onclick="goToPage('${serviceType}', 'employees')">
+              <i class="fa-solid fa-user-tie"></i>
+              <span>الموظفون</span>
+            </div>
+            <div class="icon-btn retired" onclick="goToPage('${serviceType}', 'retired')">
+              <i class="fa-solid fa-user-group"></i>
+              <span>المتقاعدون و الأرامل</span>
+            </div>
+          </div>
+        `,
+        showConfirmButton: false
+      });
+    }
+  }
+
+  function goToPage(serviceType, category) {
+    let link = '';
+    if (serviceType === 'العمرة') {
+      link = category === 'employees'
+        ? 'رابط_صفحة_العمرة_الموظفين.html'
+        : 'رابط_صفحة_العمرة_المتقاعدين.html';
+    } else if (serviceType === 'الرحلات') {
+      link = category === 'employees'
+        ? 'https://feghouli.github.io/inscreption-employe/'
+        : 'https://feghouli.github.io/retraite/';
+    } else if (serviceType === 'المخيمات') {
+      link = category === 'employees'
+        ? 'رابط_صفحة_المخيمات_الموظفين.html'
+        : 'رابط_صفحة_المخيمات_المتقاعدين.html';
+    }
+    window.open(link, '_blank');
+  }
+</script>
+
+<style>
+  .swal2-confirm.cairo-btn {
+    font-family: 'Cairo', sans-serif !important;
+    font-weight: 600;
+  }
+</style>
+
+</body>
+</html>
