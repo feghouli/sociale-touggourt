@@ -254,7 +254,7 @@ async function submitForm() {
         cancelButtonText: "إغلاق"
       }).then((result) => {
         if (result.isConfirmed) {
-          const receiptURL = `https://feghouli.github.io/dawnload_recip_empolye/?empId=${empId}`;
+          const receiptURL = `employe_reç_voyage.html?empId=${empId}`;
           window.location.href = receiptURL;
         } else {
           location.reload();
@@ -278,7 +278,7 @@ async function submitForm() {
         cancelButtonText: "إغلاق"
       }).then((result) => {
         if (result.isConfirmed) {
-          const receiptURL = `https://feghouli.github.io/dawnload_recip_empolye/?empId=${d.empId}`;
+          const receiptURL = `employe_reç_voyage.html?empId=${d.empId}`;
           window.location.href = receiptURL;
         } else {
           location.reload();
@@ -296,3 +296,4 @@ async function submitForm() {
 </script>
 </body>
 </html>
+
