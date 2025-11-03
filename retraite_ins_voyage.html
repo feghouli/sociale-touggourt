@@ -33,8 +33,8 @@
 
     window.checkAccount = async function() {
       const account = document.getElementById("account").value.trim();
-      if (account.length < 7 || account.length > 10) {
-        Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'رقم الحساب يجب أن يحتوي على بين 7 و10 أرقام' });
+      if (account.length < 1 || account.length > 10) {
+        Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'رقم الحساب غير صحيح أو أضف الأصفار في أول رقم الحساب مثل الموجود في الصك البريدي' });
         return;
       }
 
@@ -356,5 +356,6 @@
   </div>
 </body>
 </html>
+
 
 
