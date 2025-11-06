@@ -56,12 +56,15 @@
               <b>دائرة الإقامة:</b> ${d.daaira}<br>
               <b>بلدية الإقامة:</b> ${d.baladiya}<br>
               <b>الرحلة:</b> ${d.trip}<br><br>
-              <a href="${receiptURL}?phone=${d.phone}">
-                 class="swal2-confirm swal2-styled"
-                 style="background:linear-gradient(45deg,#6a11cb,#2575fc);padding:10px 20px;
-                        border-radius:8px;color:white;text-decoration:none;">
-                 🧾 تحميل الوصل
-              </a>
+              
+              <a href="${receiptURL}?phone=${d.phone}"
+   class="swal2-confirm swal2-styled"
+   style="background:linear-gradient(45deg,#6a11cb,#2575fc);
+          padding:10px 20px;border-radius:8px;
+          color:white;text-decoration:none;display:inline-block;margin-top:10px;">
+   🧾 تحميل الوصل
+</a>
+
             `,
             confirmButtonText: "إغلاق"
           });
@@ -406,6 +409,7 @@ button {
   </div>
 </body>
 </html>
+
 
 
 
