@@ -251,7 +251,7 @@ if (d.date) {
     const empId = urlParams.get("empId");
 
     if (empId) {
-      const empInput = document.getElementById("empId");
+       const empId = document.getElementById("empId").value.replace(/^0+/, "").trim();
       empInput.value = empId;
 
       setTimeout(() => {
@@ -264,6 +264,7 @@ if (d.date) {
 
 </body>
 </html>
+
 
 
 
