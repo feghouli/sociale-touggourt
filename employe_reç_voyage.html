@@ -159,7 +159,7 @@
   const scriptURL = "https://script.google.com/macros/s/AKfycbwJlfBHDebtgsu5jOj5NNUufUoHV6o7ps91HkMXY6AZGUIA0SkMFJgLW1BkilnjMKRDlA/exec";
 
   async function checkRegistration() {
-    const empId = document.getElementById("empId").value.trim();
+    const empId = document.getElementById("empId").value.replace(/^0+/, "").trim();
     const loader = document.getElementById("loader");
 
     if (!empId) {
@@ -188,6 +188,20 @@
       }
 
       const d = data.data;
+
+// ✅ تنسيق تاريخ ووقت التسجيل (dd-mm-yyyy hh:mm:ss)
+let dateFormatted = "";
+if (d.date) {
+  const dateObj = new Date(d.date);
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const year = dateObj.getFullYear();
+  const hours = String(dateObj.getHours()).padStart(2, '0');
+  const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+  const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+  dateFormatted = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+}
+      
       Swal.fire({
         title: "✅ التسجيل موجود",
         html: `
@@ -200,7 +214,7 @@
             <p><b>البلدية:</b> ${d.commune}</p>
             <p><b>الرحلة:</b> ${d.trip}</p>
             <p><b>رقم الهاتف:</b> ${d.phone}</p>
-            <p><b>تاريخ التسجيل:</b> ${d.date}</p>
+            <p><b>تاريخ التسجيل:</b> ${dateFormatted}</p>
             <br>
             <div style="text-align:center;">
               <a href="${data.fileUrl}" target="_blank" style="
@@ -250,5 +264,6 @@
 
 </body>
 </html>
+
 
 
