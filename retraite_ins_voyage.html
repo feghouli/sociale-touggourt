@@ -1,85 +1,101 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تسجيل المتقاعدين والأرامل في الرحلات 2025</title>
+
+  <!-- ✅ خط Cairo -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+ 
+  <script>
+    // ✅ رابط السكريبت
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyVRRp85dEu8qYktwVBZCcIx0orPN8WKQWtdFBx634MmiVybLAdsKli4PCAPp6RZUA-4g/exec";
+    const receiptURL = "https://feghouli.github.io/dawnload_recip_retraite/";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBnbQtyrGMltRuC9jhgu4OA9vaTXX5PXW8",
-      authDomain: "omratouggourt.firebaseapp.com",
-      projectId: "omratouggourt",
-      storageBucket: "omratouggourt.firebasestorage.app",
-      messagingSenderId: "414370554511",
-      appId: "1:414370554511:web:c16fead011fa1e39e286fa",
-      measurementId: "G-R5SER55HX5"
+    // ✅ تحقق من رقم الهاتف
+    window.validatePhone = (input) => {
+      input.value = input.value.replace(/\D/g, '').slice(0, 10);
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // ✅ تحقق من وجود رقم الهاتف
+    window.checkPhone = async function() {
+      const phone = document.getElementById("phone").value.trim();
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxx2VsNZOkDnmAI_mh4ZJ8MMYkgbvWcCVF8qx4_9Ysf0c998TDRw15fw57LOi9ztlPwkA/exec";
-
-    // ✅ التحقق من رقم الحساب
-    window.validateNumber = input => {
-      input.value = input.value.replace(/\D/g, '');
-      if (input.value.length > 10) input.value = input.value.slice(0, 10);
-    };
-
-    window.checkAccount = async function() {
-      const account = document.getElementById("account").value.trim();
-      if (account.length < 1 || account.length > 10) {
-        Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'رقم الحساب غير صحيح أو أضف الأصفار في أول رقم الحساب مثل الموجود في الصك البريدي' });
+      if (phone.length !== 10) {
+        Swal.fire({ icon: 'warning', title: 'تنبيه', text: 'رقم الهاتف غير صحيح يجب أن يتكون من 10 أرقام' });
         return;
       }
 
       Swal.fire({ title: 'جاري التحقق...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-      const normalized = account.replace(/^0+/, "");
+      const params = new URLSearchParams();
+      params.append("action", "check");
+      params.append("phone", phone);
 
       try {
-        const q = query(collection(db, "retraite"), where("account", "==", normalized));
-        const snapshot = await getDocs(q);
+        const res = await fetch(scriptURL, { method: "POST", body: params });
+        const data = await res.json();
 
         Swal.close();
 
-        if (snapshot.empty) {
+        if (data.result === "exists") {
+          const d = data.data;
+
           Swal.fire({
-            icon: "error",
-            title: "❌ غير موجود",
-            text: "رقم هذا الحساب غير موجود في قاعدة بيانات التقاعد",
-            confirmButtonText: "🔁 إعادة المحاولة"
-          }).then(() => location.reload());
-          return;
+            icon: "info",
+            title: "✅ أنت مسجل مسبقًا في الرحلات",
+            html: `
+               <hr>
+              <b>تاريخ التسجيل:</b> ${d.date || "غير متوفر"}<br>
+              <b>رقم الهاتف:</b> ${d.phone}<br>
+              <b>الاسم الكامل:</b> ${d.name}<br>
+              <b>الصفة:</b> ${d.status}<br>
+              <b>دائرة الإقامة:</b> ${d.daaira}<br>
+              <b>بلدية الإقامة:</b> ${d.baladiya}<br>
+              <b>الرحلة:</b> ${d.trip}<br><br>
+              <a href="${receiptURL}?phone=${d.phone}" target="_blank"
+                 class="swal2-confirm swal2-styled"
+                 style="background:linear-gradient(45deg,#6a11cb,#2575fc);padding:10px 20px;
+                        border-radius:8px;color:white;text-decoration:none;">
+                 🧾 تحميل الوصل
+              </a>
+            `,
+            confirmButtonText: "إغلاق"
+          });
+
+        } else if (data.result === "not_found") {
+          Swal.fire({
+            icon: "question",
+            title: "مرحبًا بك 👋",
+            html: "أنت غير مسجل بعد.<br>يمكنك التسجيل الآن في الرحلات.",
+            confirmButtonText: "التالي",
+            confirmButtonColor: "#2575fc"
+          }).then(() => {
+            showForm(phone);
+          });
         }
-
-        const data = snapshot.docs[0].data();
-        Swal.fire({
-          icon: "success",
-          title: "✅ الحساب موجود في قاعدة البيانات",
-          html: `<b>رقم الحساب:</b> ${data.account}<br><b>الاسم الكامل:</b> ${data.name}`,
-          confirmButtonText: "متابعة التسجيل"
-        }).then(() => showForm(account, data.name));
-
       } catch (err) {
         console.error(err);
-        Swal.fire("❌ خطأ", "فشل الاتصال بقاعدة البيانات", "error");
+        Swal.fire("❌ خطأ", "فشل الاتصال بجدول Google Sheets", "error");
       }
     };
 
-    // 🧾 نموذج التسجيل
-    window.showForm = function(account, name) {
+    // ✅ عرض استمارة التسجيل
+    window.showForm = function(phone) {
       const container = document.getElementById("mainContainer");
       container.innerHTML = `
         <h2>استمارة تسجيل المتقاعدين والأرامل</h2>
+        <input type="text" id="phoneField" value="${phone}" readonly>
 
-        <input type="text" id="accountField" value="${account}" readonly>
-        <input type="text" id="nameField" value="${name}" readonly>
+        <div style="display: flex; gap: 10px; margin-bottom: 18px;">
+          <input type="text" id="lastNameField" placeholder="اللقب" style="flex: 1; color: black;" class="name-input">
+          <input type="text" id="firstNameField" placeholder="الاسم" style="flex: 1; color: black;" class="name-input">
+        </div>
+
+        <input type="date" id="birthField" placeholder="تاريخ الميلاد" pattern="\\d{4}-\\d{2}-\\d{2}" title="التنسيق: yyyy-mm-dd">
 
         <select id="statusField">
           <option value="">اختر الصفة</option>
@@ -108,8 +124,7 @@
           <option value="تمنراست">تمنراست</option>
         </select>
 
-        <input type="text" id="phoneField" placeholder="رقم الهاتف (10 أرقام)" oninput="validatePhone(this)">
-        <button id="submitBtn" onclick="submitForm()">تسجيل</button>
+        <button onclick="submitForm()">تسجيل</button>
       `;
 
       window.baladiyaMap = {
@@ -121,6 +136,7 @@
       };
     };
 
+    // ✅ تحديث البلديات
     window.updateBaladiya = function() {
       const daaira = document.getElementById("daairaField").value;
       const baladiyaSelect = document.getElementById("baladiyaField");
@@ -134,29 +150,25 @@
       }
     };
 
-    window.validatePhone = function(input) {
-      let value = input.value.replace(/\D/g, "");
-      if (value.length > 10) value = value.slice(0, 10);
-      let formatted = "";
-      for (let i = 0; i < value.length; i += 2) {
-        if (i > 0) formatted += " ";
-        formatted += value.substring(i, i + 2);
-      }
-      input.value = formatted;
-    };
-
-    // 🚀 إرسال البيانات إلى Google Sheets
+    // ✅ إرسال البيانات
     window.submitForm = async function() {
-      const account = document.getElementById("accountField").value;
-      const name = document.getElementById("nameField").value;
-      const status = document.getElementById("statusField").value.trim();
-      const daaira = document.getElementById("daairaField").value.trim();
-      const baladiya = document.getElementById("baladiyaField").value.trim();
-      const trip = document.getElementById("tripField").value.trim();
       const phone = document.getElementById("phoneField").value.trim();
+      const lastName = (document.getElementById("lastNameField") || {value:""}).value.trim();
+      const firstName = (document.getElementById("firstNameField") || {value:""}).value.trim();
+      const name = (lastName + " " + firstName).trim().replace(/\s+/g, " ");
+      const birth = document.getElementById("birthField").value;
+      const status = document.getElementById("statusField").value;
+      const daaira = document.getElementById("daairaField").value;
+      const baladiya = document.getElementById("baladiyaField").value;
+      const trip = document.getElementById("tripField").value;
 
-      if (!status || !daaira || !baladiya || !trip || phone.replace(/\s/g, '').length !== 10) {
+      if (!lastName || !firstName || !birth || !status || !daaira || !baladiya || !trip) {
         Swal.fire("⚠️ تنبيه", "يرجى ملء جميع الحقول بشكل صحيح", "warning");
+        return;
+      }
+
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(birth)) {
+        Swal.fire("⚠️ تنبيه", "يرجى كتابة تاريخ الميلاد بصيغة yyyy-mm-dd", "warning");
         return;
       }
 
@@ -164,63 +176,71 @@
 
       const params = new URLSearchParams();
       params.append("action", "register");
-      params.append("account", account);
+      params.append("phone", phone);
       params.append("name", name);
+      params.append("birth", birth);
       params.append("status", status);
       params.append("daaira", daaira);
       params.append("baladiya", baladiya);
       params.append("trip", trip);
-      params.append("phone", phone);
 
       try {
         const res = await fetch(scriptURL, { method: "POST", body: params });
         const data = await res.json();
-
         Swal.close();
 
-        // ✅ حالة التسجيل الجديد — فتح في نفس الصفحة
         if (data.result === "success") {
           Swal.fire({
-            title: "✅ تم التسجيل بنجاح",
             icon: "success",
-            showCancelButton: true,
-            confirmButtonText: "📄 تحميل وصل التسجيل",
-            cancelButtonText: "🔙 إغلاق"
-          }).then(result => {
-            if (result.isConfirmed) {
-              window.location.href = `retraite_reç_voyage.html?empId=${account}`;
-            } else {
-              location.reload();
-            }
-          });
-        } 
-        // ⚠️ حالة مسجل مسبقًا — فتح في نفس الصفحة أيضًا
-        else if (data.result === "exists") {
-          const d = data.data;
-          Swal.fire({
-            title: "⚠️ الحساب مسجل مسبقًا",
-            html: `<b>رقم الحساب:</b> ${d.account}<br>
-                   <b>الاسم الكامل:</b> ${d.name}<br>
-                   <b>الصفة:</b> ${d.status}<br>
-                   <b>دائرة الإقامة:</b> ${d.daaira}<br>
-                   <b>بلدية الإقامة:</b> ${d.baladiya}<br>
-                   <b>الرحلة المختارة:</b> ${d.trip}<br>
-                   <b>رقم الهاتف:</b> ${d.phone}`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "📄 تحميل وصل التسجيل",
-            cancelButtonText: "🔙 إغلاق"
-          }).then(result => {
-            if (result.isConfirmed) {
-              window.location.href = `retraite_reç_voyage.html?empId=${d.account}`;
-            } else {
-              location.reload();
-            }
-          });
-        } 
-        else {
-          Swal.fire("❌ خطأ", "تعذر تسجيل البيانات", "error");
+            title: "✅ تم التسجيل بنجاح",
+            html: `
+              تم تسجيلك بنجاح في الرحلة.<br>
+              يمكنك الآن تحميل الوصل الخاص بك.<br><br>
+              <a href="${receiptURL}?phone=${phone}" target="_blank"
+                 class="swal2-confirm swal2-styled"
+                 style="background:linear-gradient(45deg,#6a11cb,#2575fc);padding:10px 20px;
+                        border-radius:8px;color:white;text-decoration:none;">
+                 🧾 تحميل الوصل
+              </a>
+            `,
+            confirmButtonText: "إغلاق"
+          }).then(() => location.reload());
         }
+        else if (data.result === "exists") {
+          const d = data.data || {};
+          Swal.fire({
+            icon: "info",
+            title: "هذا الرقم مسجل مسبقًا",
+            html: `
+              <b>تاريخ التسجيل:</b> ${d.date || "غير متوفر"}<br>
+              <b>رقم الهاتف:</b> ${d.phone || ""}<br>
+              <b>الاسم الكامل:</b> ${d.name || ""}<br>
+              <b>الصفة:</b> ${d.status || ""}<br>
+              <b>دائرة الإقامة:</b> ${d.daaira || ""}<br>
+              <b>بلدية الإقامة:</b> ${d.baladiya || ""}<br>
+              <b>الرحلة:</b> ${d.trip || ""}<br><br>
+              <a href="${receiptURL}?phone=${d.phone}" target="_blank"
+                 class="swal2-confirm swal2-styled"
+                 style="background:linear-gradient(45deg,#6a11cb,#2575fc);padding:10px 20px;
+                        border-radius:8px;color:white;text-decoration:none;">
+                 🧾 تحميل الوصل
+              </a>
+            `,
+            confirmButtonText: "إغلاق"
+          });
+        }
+        else if (data.result === "duplicate_person") {
+          Swal.fire({
+            icon: "warning",
+            title: "⚠️ فشل التسجيل",
+            html: "يوجد بالفعل شخص بنفس <b>الاسم الكامل</b> ونفس <b>سنة الميلاد</b> مسجل مسبقًا.<br>لا يمكن إتمام التسجيل برقم مختلف.",
+            confirmButtonText: "حسنًا"
+          });
+        }
+        else {
+          Swal.fire("❌ خطأ", data.message || "فشل تسجيل البيانات", "error");
+        }
+
       } catch (err) {
         console.error(err);
         Swal.fire("❌ خطأ", "فشل الاتصال بالخادم", "error");
@@ -255,7 +275,62 @@
   body {
     padding: 10px;
   }
+} /* ✅ ← إغلاق القوس هنا */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  display: flex; justify-content: center; align-items: center;
+  min-height: 100vh; padding: 15px;
 }
+.name-input::placeholder { color: black; opacity: 1; }
+.container {
+  background: white; padding: 35px 25px; border-radius: 18px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2); text-align: center;
+  width: 100%; max-width: 500px;
+}
+input, select, button, h2 { font-family: 'Cairo', sans-serif; }
+input, select {
+  width: 100%; padding: 14px 18px; margin-bottom: 18px;
+  border-radius: 10px; border: 2px solid #e0e0e0;
+  font-size: 15px; text-align: center;
+}
+input:focus, select:focus { outline: none; border-color: #2575fc; }
+button {
+  background: linear-gradient(45deg, #6a11cb, #2575fc);
+  color: white; border: none; padding: 14px 0;
+  border-radius: 10px; font-size: 15px; cursor: pointer;
+  font-weight: 600; width: 100%;
+}
+#phone { direction: ltr; text-align: center; }
+.page-header { text-align: center; margin-bottom: 25px; }
+.header-logo {
+  width: 160px; height: auto; margin: 0 auto 15px auto;
+  display: block; filter: contrast(1.05) brightness(1.1);
+  animation: pulseLogo 2.5s ease-in-out infinite;
+}
+@keyframes pulseLogo {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.header-text { font-size: 15px; font-weight: 600; color: #000; line-height: 1.7; }
+.gradient-title {
+  font-size: 24px; font-weight: 600;
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-top: 20px; margin-bottom: 15px;
+  display: inline-block; position: relative;
+}
+.gradient-title::after {
+  content: ""; position: absolute; bottom: -5px; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  border-radius: 2px;
+}
+
+ 
 
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -265,15 +340,13 @@
       display: flex; justify-content: center; align-items: center;
       min-height: 100vh; padding: 15px;
     }
+    .name-input::placeholder { color: black; opacity: 1; }
     .container {
       background: white; padding: 35px 25px; border-radius: 18px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.2); text-align: center;
       width: 100%; max-width: 500px;
-      font-family: 'Cairo', sans-serif;
     }
-    input, select, button, h2 {
-      font-family: 'Cairo', sans-serif;
-    }
+    input, select, button, h2 { font-family: 'Cairo', sans-serif; }
     input, select {
       width: 100%; padding: 14px 18px; margin-bottom: 18px;
       border-radius: 10px; border: 2px solid #e0e0e0;
@@ -286,52 +359,29 @@
       border-radius: 10px; font-size: 15px; cursor: pointer;
       font-weight: 600; width: 100%;
     }
-    #phoneField {
-      direction: ltr;
-      text-align: center;
-    }
-
-    .page-header {
-      text-align: center;
-      margin-bottom: 25px;
-      font-family: "Cairo", sans-serif;
-    }
-
-    .page-header .header-logo {
-      width: 160px;
-      height: auto;
-      display: block;
-      margin: 0 auto 15px auto;
-      filter: contrast(1.05) brightness(1.1);
+    #phone { direction: ltr; text-align: center; }
+    .page-header { text-align: center; margin-bottom: 25px; }
+    .header-logo {
+      width: 160px; height: auto; margin: 0 auto 15px auto;
+      display: block; filter: contrast(1.05) brightness(1.1);
       animation: pulseLogo 2.5s ease-in-out infinite;
     }
-
     @keyframes pulseLogo {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.08); }
     }
-
+    .header-text { font-size: 15px; font-weight: 600; color: #000; line-height: 1.7; }
     .gradient-title {
-      font-family: "Cairo", sans-serif;
-      font-size: 24px;
-      font-weight: 600;
+      font-size: 24px; font-weight: 600;
       background: linear-gradient(to right, #6a11cb, #2575fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-align: center;
-      position: relative;
-      margin-top: 20px;
-      margin-bottom: 15px;
-      display: inline-block;
+      margin-top: 20px; margin-bottom: 15px;
+      display: inline-block; position: relative;
     }
-
     .gradient-title::after {
-      content: "";
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 100%;
-      height: 2px;
+      content: ""; position: absolute; bottom: -5px; left: 0;
+      width: 100%; height: 2px;
       background: linear-gradient(to right, #6a11cb, #2575fc);
       border-radius: 2px;
     }
@@ -351,11 +401,9 @@
     </div>
 
     <h2 class="gradient-title">بوابة تسجيل المتقاعدين و الأرامل في الرحلات</h2>
-    <input type="text" id="account" placeholder="أدخل رقم الحساب الجاري" oninput="validateNumber(this)">
-    <button onclick="checkAccount()">تحقق من رقم الحساب</button>
+    <input type="text" id="phone" oninput="validatePhone(this)" maxlength="10" placeholder="أدخل رقم الهاتف">
+    <button onclick="checkPhone()">تحقق من رقم الهاتف</button>
   </div>
 </body>
 </html>
-
-
 
