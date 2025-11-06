@@ -245,25 +245,28 @@ if (d.date) {
     }
   }
 
-  // ✅ تعبئة الحقل والضغط التلقائي بعد تحميل الصفحة
-  window.onload = function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const empId = urlParams.get("empId");
+ // ✅ تعبئة الحقل والضغط التلقائي بعد تحميل الصفحة
+window.onload = function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  let empId = urlParams.get("empId");
 
-    if (empId) {
-       const empId = document.getElementById("empId").value.replace(/^0+/, "").trim();
-      empInput.value = empId;
+  if (empId) {
+    empId = empId.replace(/^0+/, "").trim(); // إزالة الأصفار في البداية
+    const empInput = document.getElementById("empId");
+    empInput.value = empId;
 
-      setTimeout(() => {
-        const btn = document.querySelector("button[onclick='checkRegistration()']");
-        if (btn) btn.click();
-      }, 500);
-    }
-  };
+    setTimeout(() => {
+      const btn = document.querySelector("button[onclick='checkRegistration()']");
+      if (btn) btn.click();
+    }, 500);
+  }
+};
+
   </script>
 
 </body>
 </html>
+
 
 
 
